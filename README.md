@@ -24,4 +24,5 @@
 back & front projects apply to common proto 
 
 Workdir of gek is back with .settings file
+
 Also gek works in local dir with services.yaml file
