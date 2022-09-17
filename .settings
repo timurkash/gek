@@ -1,0 +1,9 @@
+name: name
+version: v1
+service: ServiceFromProto
+kratosLayout: https://github.com/timurkash/kratos-layout.git
+templateRepo: github.com/company/project/back/kratos-template
+
+project: project
+email: timurkash@gmail.com
+description: Some description
