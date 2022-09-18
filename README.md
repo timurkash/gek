@@ -1,5 +1,7 @@
 # gek
 
+GEnerate Kratos
+
 ## Project multirepo
 
 - gitsite/company/project
