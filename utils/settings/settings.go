@@ -19,26 +19,27 @@ const FileName = ".settings"
 
 type (
 	Settings struct {
-		Name         string `yaml:"name" valid:"required,lowercase"`
-		Version      string `yaml:"version" valid:"required,lowercase"`
-		Service      string `yaml:"service" valid:"required"`
-		KratosLayout string `yaml:"kratosLayout"`
-		TemplateRepo string `yaml:"templateRepo" valid:"required"`
-		ConfigVolume string `yaml:"configVolume"`
-		Port         *Port  `yaml:"port"`
+		Name           string `yaml:"name" valid:"required,lowercase"`
+		Version        string `yaml:"version" valid:"required,lowercase"`
+		Service        string `yaml:"service" valid:"required"`
+		ServicePackage string `yaml:"servicePackage"`
+		KratosLayout   string `yaml:"kratosLayout"`
+		TemplateRepo   string `yaml:"templateRepo" valid:"required"`
+		ConfigVolume   string `yaml:"configVolume"`
+		Port           *Port  `yaml:"port"`
 		// Description
 		Project     string `yaml:"project"`
 		Email       string `yaml:"email" valid:"email"`
 		Description string `yaml:"description"`
 
-		ServiceLower  string
-		ServiceLower_ string
-		Repo          string
-		ProtoRepo     string
-		ProjectGroup  string
-		GoPathSrc     string
-		Pwd           string
-		NameVersion   string
+		ServiceLower string
+		//ServiceLower_ string
+		Repo         string
+		ProtoRepo    string
+		ProjectGroup string
+		GoPathSrc    string
+		Pwd          string
+		NameVersion  string
 	}
 	Port struct {
 		Grpc int `yaml:"grpc" valid:"int"`
@@ -68,7 +69,9 @@ func (s *Settings) LoadAndCheck() error {
 		return errors.New(".settings.Service has to be in title case")
 	}
 	s.ServiceLower = strings.ToLower(s.Service[:1]) + s.Service[1:]
-	s.ServiceLower_ = strings.ToLower(s.Service)
+	if s.ServicePackage == "" {
+		strings.ToLower(s.Service)
+	}
 	if s.ConfigVolume == "" {
 		s.ConfigVolume = "/data/conf"
 	}
@@ -127,11 +130,11 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !files.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)
 	}
-	srcProtoRepoService := fmt.Sprintf("%sapi/%s/", srcProtoRepo, s.ServiceLower_)
+	srcProtoRepoService := fmt.Sprintf("%sapi/%s/", srcProtoRepo, s.ServicePackage)
 	if !files.IsDirExists(srcProtoRepoService) {
 		return fmt.Errorf("%s not exists", srcProtoRepoService)
 	}
-	srcProtoRepoServiceProto := fmt.Sprintf("%s%s.proto", srcProtoRepoService, s.ServiceLower_)
+	srcProtoRepoServiceProto := fmt.Sprintf("%s%s.proto", srcProtoRepoService, s.ServicePackage)
 	fileBytes, err := os.ReadFile(srcProtoRepoServiceProto)
 	if err != nil {
 		return err
@@ -139,11 +142,14 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !bytes.Contains(fileBytes, []byte(fmt.Sprintf("service %s {", s.Service))) {
 		return fmt.Errorf("%s not contains service %s", srcProtoRepoServiceProto, s.Service)
 	}
-	packageService := fmt.Sprintf("package api.%s;", s.ServiceLower_)
+	if strings.ToLower(s.ServicePackage) != s.ServicePackage {
+		return fmt.Errorf("servicePackage not in lower case")
+	}
+	packageService := fmt.Sprintf("package api.%s;", s.ServicePackage)
 	if !bytes.Contains(fileBytes, []byte(packageService)) {
 		return fmt.Errorf("%s not contains package %s", srcProtoRepoServiceProto, packageService)
 	}
-	goOption := fmt.Sprintf(`option go_package = "%s/proto/gen/go/api/%s;%s";`, s.ProjectGroup, s.ServiceLower_, s.ServiceLower_)
+	goOption := fmt.Sprintf(`option go_package = "%s/proto/gen/go/api/%s;%s";`, s.ProjectGroup, s.ServicePackage, s.ServicePackage)
 	if !bytes.Contains(fileBytes, []byte(goOption)) {
 		return fmt.Errorf("%s not contains go_option %s", srcProtoRepoServiceProto, goOption)
 	}

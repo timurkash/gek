@@ -11,7 +11,7 @@ import (
 
 func processProto(settings *settings.Settings) error {
 	srcProtoRepo := settings.GoPathSrc + settings.ProjectGroup + "/proto/"
-	file, err := os.Open(srcProtoRepo + "internal/service/" + settings.ServiceLower_ + ".go")
+	file, err := os.Open(srcProtoRepo + "internal/service/" + settings.ServicePackage + ".go")
 	if err != nil {
 		return err
 	}
