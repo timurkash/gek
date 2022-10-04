@@ -68,9 +68,9 @@ func (s *Settings) LoadAndCheck() error {
 	if firstLetter != cases.Title(language.English).String(firstLetter) {
 		return errors.New(".settings.Service has to be in title case")
 	}
-	s.ServiceLower = strings.ToLower(s.Service[:1]) + s.Service[1:]
+	s.ServiceLower = fmt.Sprintf("%s%s", strings.ToLower(s.Service[:1]), s.Service[1:])
 	if s.ServicePackage == "" {
-		strings.ToLower(s.Service)
+		s.ServicePackage = strings.ToLower(s.Service)
 	}
 	if s.ConfigVolume == "" {
 		s.ConfigVolume = "/data/conf"

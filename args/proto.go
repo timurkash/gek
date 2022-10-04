@@ -10,8 +10,8 @@ import (
 )
 
 func processProto(settings *settings.Settings) error {
-	srcProtoRepo := settings.GoPathSrc + settings.ProjectGroup + "/proto/"
-	file, err := os.Open(srcProtoRepo + "internal/service/" + settings.ServicePackage + ".go")
+	srcProtoRepo := fmt.Sprintf("%s%s/proto/", settings.GoPathSrc, settings.ProjectGroup)
+	file, err := os.Open(fmt.Sprintf("%sinternal/service/%s.go", srcProtoRepo, settings.ServicePackage))
 	if err != nil {
 		return err
 	}
@@ -21,7 +21,7 @@ func processProto(settings *settings.Settings) error {
 		}
 	}()
 	scanner := bufio.NewScanner(file)
-	fileWrite, err := os.Create(settings.GoPathSrc + settings.Repo + "/internal/service/greeter.go")
+	fileWrite, err := os.Create(fmt.Sprintf("%s%s/internal/service/greeter.go", settings.GoPathSrc, settings.Repo))
 	if err != nil {
 		return err
 	}
@@ -44,13 +44,13 @@ func processProto(settings *settings.Settings) error {
 `, settings.Service)); err != nil {
 				return err
 			}
-		} else if strings.HasPrefix(line, "func New"+settings.Service+"Service()") {
+		} else if strings.HasPrefix(line, fmt.Sprintf("func New%sService()", settings.Service)) {
 			if _, err := writer.WriteString(fmt.Sprintf(`func New%sService(uc *biz.%sUsecase, logger log.Logger) *%sService {
 `, settings.Service, settings.Service, settings.Service)); err != nil {
 				return err
 			}
 			writeLine = false
-		} else if line == "\treturn &"+settings.Service+"Service{}" {
+		} else if line == fmt.Sprintf("\treturn &%sService{}", settings.Service) {
 			if _, err := writer.WriteString(fmt.Sprintf(`	return &%sService{
 		uc:  uc,
 		log: log.NewHelper(logger),

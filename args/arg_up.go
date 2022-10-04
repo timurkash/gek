@@ -55,7 +55,9 @@ func ArgUp(level int) error {
 	if err != nil {
 		return err
 	}
-	valuesBytes = bytes.ReplaceAll(valuesBytes, []byte("  tag: "+string(version)), []byte("  tag: "+versionNext))
+	valuesBytes = bytes.ReplaceAll(valuesBytes,
+		[]byte(fmt.Sprintf("  tag: %s", string(version))),
+		[]byte(fmt.Sprintf("  tag: %s", versionNext)))
 	if err := os.WriteFile("values.yaml", valuesBytes, 0644); err != nil {
 		return err
 	}

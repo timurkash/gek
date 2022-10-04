@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
 	"gitlab.com/mcsolutions/tools/gek/utils/commands"
 )
@@ -37,10 +36,9 @@ run
 func IsExistsAll() error {
 	for _, util := range Utils {
 		if err := IsExists(util.Name); err != nil {
-			errStr := fmt.Sprintf("%s not installed", util.Name)
-			errStr += "\nto install: " + util.Command
-			errStr += "\ntotal list of utils run: gek -utl"
-			return errors.New(errStr)
+			return fmt.Errorf(`%s not installed
+to install: %s
+total list of utils run: gek -utl`, util.Name, util.Command)
 		}
 	}
 	return nil

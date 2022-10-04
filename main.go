@@ -30,7 +30,7 @@ func main() {
 			if err := utils.IsExists(util.Name); err != nil {
 				fmt.Printf(" - %s: To install run '%s'\n", util.Name, util.Command)
 			} else {
-				fmt.Println(" - " + util.Name + ": installed")
+				fmt.Printf(" - %s: installed\n", util.Name)
 			}
 		}
 	case "-gen":

@@ -20,11 +20,11 @@ func downloadAndReplaceFromTemplateRepo(settings *settingsPackage.Settings) erro
 	}
 	templateRepo = strings.ReplaceAll(templateRepo, "https://", "")
 	templateRepo = strings.ReplaceAll(templateRepo, ".git", "")
-	repoDir := settings.GoPathSrc + templateRepo
+	repoDir := fmt.Sprintf("%s%s", settings.GoPathSrc, templateRepo)
 	if err := cloneOrPull(settings.GoPathSrc, templateRepo); err != nil {
 		return err
 	}
-	projectDir := settings.GoPathSrc + settings.Repo
+	projectDir := fmt.Sprintf("%s%s", settings.GoPathSrc, settings.Repo)
 	if err := os.Chdir(projectDir); err != nil {
 		return err
 	}
@@ -50,9 +50,18 @@ func downloadAndReplaceFromTemplateRepo(settings *settingsPackage.Settings) erro
 }
 
 func modFile(path string, info os.FileInfo, settings *settingsPackage.Settings) error {
-	filenameInRepoDir := strings.ReplaceAll(path, settings.GoPathSrc+settings.TemplateRepo, "")
+	filenameInRepoDir := strings.ReplaceAll(path,
+		fmt.Sprintf("%s%s", settings.GoPathSrc, settings.TemplateRepo),
+		"")
 	if info.IsDir() {
-		if _, err := commands.Exec("mkdir", "-p", settings.Pwd+filenameInRepoDir); err != nil {
+		if filenameInRepoDir == "" {
+			return nil
+		}
+		if _, err := commands.Exec(
+			"mkdir",
+			"-p",
+			fmt.Sprintf("%s/%s%s", settings.Pwd, settings.NameVersion, filenameInRepoDir),
+		); err != nil {
 			return err
 		}
 		return nil
@@ -71,7 +80,7 @@ func modFile(path string, info os.FileInfo, settings *settingsPackage.Settings) 
 	if filenameInRepoDir == "/gitlab-ci.yml" {
 		filenameInRepoDir = "/.gitlab-ci.yml"
 	}
-	modFile, err := os.Create(settings.GoPathSrc + settings.Repo + filenameInRepoDir)
+	modFile, err := os.Create(fmt.Sprintf("%s%s%s", settings.GoPathSrc, settings.Repo, filenameInRepoDir))
 	if err != nil {
 		return err
 	}
@@ -85,7 +94,7 @@ func modFile(path string, info os.FileInfo, settings *settingsPackage.Settings) 
 }
 
 func cloneOrPull(goPathSrc, repo string) error {
-	repoDir := goPathSrc + repo
+	repoDir := fmt.Sprintf("%s%s", goPathSrc, repo)
 	if files.IsDirExists(repoDir) {
 		if err := os.Chdir(repoDir); err != nil {
 			return err
@@ -94,7 +103,7 @@ func cloneOrPull(goPathSrc, repo string) error {
 			return err
 		}
 	} else {
-		if err := commands.ExecOnline("git", "clone", "https://"+repo+".git", repoDir); err != nil {
+		if err := commands.ExecOnline("git", "clone", fmt.Sprintf("https://%s.git", repo), repoDir); err != nil {
 			return err
 		}
 	}

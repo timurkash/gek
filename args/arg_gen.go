@@ -9,16 +9,16 @@ import (
 )
 
 func ArgGen() error {
-	settings := &settingsPackage.Settings{}
+	settings := new(settingsPackage.Settings)
 	if err := settings.LoadAndCheck(); err != nil {
 		return err
 	}
 	if err := settings.CheckEnv(true); err != nil {
 		return err
 	}
-	kratosNew := "kratos new " + settings.Repo
+	kratosNew := fmt.Sprintf("kratos new %s", settings.Repo)
 	if settings.KratosLayout != "" {
-		kratosNew = kratosNew + " -r " + settings.KratosLayout
+		kratosNew = fmt.Sprintf("%s -r %s", kratosNew, settings.KratosLayout)
 	}
 	scriptCommands := []string{
 		kratosNew,
