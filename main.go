@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gitlab.com/mcsolutions/tools/gek/args"
-	"gitlab.com/mcsolutions/tools/gek/utils"
+	"github.com/timurkash/gek/args"
+	"github.com/timurkash/gek/utils"
 	"log"
 	"os"
 )
@@ -27,7 +27,7 @@ func main() {
 	case "-utl":
 		fmt.Println("required utils:")
 		for _, util := range utils.Utils {
-			if err := utils.IsExists(util.Name); err != nil {
+			if err := utils.IsUtilExists(util.Name); err != nil {
 				fmt.Printf(" - %s: To install run '%s'\n", util.Name, util.Command)
 			} else {
 				fmt.Printf(" - %s: installed\n", util.Name)
@@ -35,23 +35,6 @@ func main() {
 		}
 	case "-gen":
 		if err := args.ArgGen(); err != nil {
-			log.Fatalln(err)
-		}
-		//args.GitlabVariables()
-	case "-upv":
-		if err := args.ArgUp(2); err != nil {
-			log.Fatalln(err)
-		}
-	case "-uvp":
-		if err := args.ArgUp(1); err != nil {
-			log.Fatalln(err)
-		}
-	case "-vup":
-		if err := args.ArgUp(0); err != nil {
-			log.Fatalln(err)
-		}
-	case "-env":
-		if err := args.ArgEnvoy(); err != nil {
 			log.Fatalln(err)
 		}
 	case "-htp":

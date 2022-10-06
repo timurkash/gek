@@ -2,7 +2,6 @@ package args
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,7 +28,7 @@ func ArgMessagesServer() error {
 }
 
 func changeMessages(path string, perm os.FileMode) error {
-	bytesIn, err := ioutil.ReadFile(path)
+	bytesIn, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}

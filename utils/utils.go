@@ -2,7 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"gitlab.com/mcsolutions/tools/gek/utils/commands"
+	"github.com/timurkash/gek/utils/commands"
+	"log"
+	"os"
 )
 
 type Util struct {
@@ -35,7 +37,7 @@ run
 
 func IsExistsAll() error {
 	for _, util := range Utils {
-		if err := IsExists(util.Name); err != nil {
+		if err := IsUtilExists(util.Name); err != nil {
 			return fmt.Errorf(`%s not installed
 to install: %s
 total list of utils run: gek -utl`, util.Name, util.Command)
@@ -44,7 +46,49 @@ total list of utils run: gek -utl`, util.Name, util.Command)
 	return nil
 }
 
-func IsExists(util string) error {
+func IsUtilExists(util string) error {
 	_, err := commands.Exec("which", util)
 	return err
+}
+
+func IsFileExists(filename string) bool {
+	fi, err := os.Stat(filename)
+	if err == nil {
+		if !fi.IsDir() {
+			return true
+		} else {
+			log.Println(filename, "is directory")
+			return false
+		}
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
+}
+
+func IsDirExists(dirname string) bool {
+	fi, err := os.Stat(dirname)
+	if err == nil {
+		if fi.IsDir() {
+			return true
+		} else {
+			log.Println(dirname, "is not directory")
+			return false
+		}
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
+}
+
+func IsExists(filename string) bool {
+	_, err := os.Stat(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
 }

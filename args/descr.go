@@ -24,7 +24,7 @@ Options:
 
 func ShowDescription() {
 	fmt.Println()
-	fmt.Println("gek compiled from gitlab.com/mcsolutions/tools/gek")
+	fmt.Println("gek compiled from github.com/timurkash/gek")
 	fmt.Println()
 	fmt.Println(description)
 	fmt.Println(`
@@ -61,7 +61,7 @@ name: service-name
 version: v1
 service: Service
 kratosLayout: https://github.com/timurkash/kratos-layout.git
-templateRepo: gitlab.com/mcsolutions/find-psy/back/kratos-template
+templateRepo: your template repo
 
 project: the-map
 email: t.kashaev@mapcard.pro
@@ -79,15 +79,4 @@ And the template project is ready to modify. The files to be rewrote is `)
 	for _, file := range files {
 		fmt.Printf(" - %s\n", file)
 	}
-}
-
-func GitlabVariables() {
-	fmt.Println(`
-For CI/CD set required gitlab variables:
-- KUBECONFIG_BASE64
-- KUBECONFIG_CONTEXT
-- IMAGE_PULL_SECRET
-- STAGING_NAMESPACE
-- PRODUCTION_NAMESPACE
-- RUNNER_TAG`)
 }

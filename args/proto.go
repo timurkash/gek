@@ -3,7 +3,7 @@ package args
 import (
 	"bufio"
 	"fmt"
-	"gitlab.com/mcsolutions/tools/gek/utils/settings"
+	"github.com/timurkash/gek/utils/settings"
 	"log"
 	"os"
 	"strings"

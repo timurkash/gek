@@ -3,11 +3,11 @@ package args
 import (
 	"bufio"
 	"fmt"
+	"github.com/timurkash/gek/utils"
+	"log"
 	"os"
 	"strings"
 	"text/template"
-
-	"github.com/timurkash/back/files"
 )
 
 type Service struct {
@@ -36,7 +36,7 @@ func ArgHttpServer() error {
 				return err
 			}
 			filename := fmt.Sprintf("gen/go/api/%s/%s_http.pb.go", name, name)
-			if !files.IsExists(filename) {
+			if !utils.IsExists(filename) {
 				if err := rewriteFile(temp, filename, &Service{
 					Name:    name,
 					Service: service,
@@ -54,9 +54,17 @@ func rewriteFile(temp *template.Template, filename string, service *Service) err
 	if err != nil {
 		return err
 	}
-	defer httpFile.Close()
+	defer func() {
+		if err := httpFile.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	writer := bufio.NewWriter(httpFile)
-	defer writer.Flush()
+	defer func() {
+		if err := writer.Flush(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	return temp.Execute(writer, *service)
 }
 
@@ -93,7 +101,11 @@ func getService(filename string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	errOut := fmt.Errorf("bad %s file", filename)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

@@ -6,8 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/asaskevich/govalidator"
-	"github.com/timurkash/back/files"
-	"gitlab.com/mcsolutions/tools/gek/utils"
+	"github.com/timurkash/gek/utils"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
@@ -48,7 +47,7 @@ type (
 )
 
 func (s *Settings) LoadAndCheck() error {
-	if !files.IsFileExists(FileName) {
+	if !utils.IsFileExists(FileName) {
 		return fmt.Errorf("go settings file %s is not exists in current directory", FileName)
 	}
 	file, err := os.Open(FileName)
@@ -94,7 +93,7 @@ func (s *Settings) LoadAndCheck() error {
 func (s *Settings) CheckEnv(gen bool) error {
 	nameVersion := fmt.Sprintf("%s-%s", s.Name, s.Version)
 	s.NameVersion = nameVersion
-	dirExists := files.IsDirExists(nameVersion)
+	dirExists := utils.IsDirExists(nameVersion)
 	if gen && dirExists {
 		return fmt.Errorf("directory %s already exists", nameVersion)
 	}
@@ -118,7 +117,7 @@ func (s *Settings) CheckEnv(gen bool) error {
 	}
 	projectGroup := projectGroupBack[:i]
 	s.ProtoRepo = fmt.Sprintf("%s/proto", projectGroup)
-	if files.IsDirExists(s.ProtoRepo) {
+	if utils.IsDirExists(s.ProtoRepo) {
 		return errors.New("no /proto dir in projectGroup")
 	}
 	s.ProjectGroup = projectGroup
@@ -127,11 +126,11 @@ func (s *Settings) CheckEnv(gen bool) error {
 		return err
 	}
 	srcProtoRepo := fmt.Sprintf("%s%s/proto/", s.GoPathSrc, s.ProjectGroup)
-	if !files.IsDirExists(srcProtoRepo) {
+	if !utils.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)
 	}
 	srcProtoRepoService := fmt.Sprintf("%sapi/%s/", srcProtoRepo, s.ServicePackage)
-	if !files.IsDirExists(srcProtoRepoService) {
+	if !utils.IsDirExists(srcProtoRepoService) {
 		return fmt.Errorf("%s not exists", srcProtoRepoService)
 	}
 	srcProtoRepoServiceProto := fmt.Sprintf("%s%s.proto", srcProtoRepoService, s.ServicePackage)

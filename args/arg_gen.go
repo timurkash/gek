@@ -2,8 +2,8 @@ package args
 
 import (
 	"fmt"
-	"gitlab.com/mcsolutions/tools/gek/utils/commands"
-	settingsPackage "gitlab.com/mcsolutions/tools/gek/utils/settings"
+	"github.com/timurkash/gek/utils/commands"
+	settingsPackage "github.com/timurkash/gek/utils/settings"
 	"os"
 	"strings"
 )

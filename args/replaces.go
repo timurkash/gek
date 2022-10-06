@@ -3,17 +3,18 @@ package args
 import (
 	"bufio"
 	"fmt"
+	"github.com/timurkash/gek/utils"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
 
-	"github.com/timurkash/back/files"
-	"gitlab.com/mcsolutions/tools/gek/utils/commands"
-	settingsPackage "gitlab.com/mcsolutions/tools/gek/utils/settings"
+	"github.com/timurkash/gek/utils/commands"
+	"github.com/timurkash/gek/utils/settings"
 )
 
-func downloadAndReplaceFromTemplateRepo(settings *settingsPackage.Settings) error {
+func downloadAndReplaceFromTemplateRepo(settings *settings.Settings) error {
 	templateRepo := settings.TemplateRepo
 	if templateRepo == "" {
 		return nil
@@ -49,7 +50,7 @@ func downloadAndReplaceFromTemplateRepo(settings *settingsPackage.Settings) erro
 	return nil
 }
 
-func modFile(path string, info os.FileInfo, settings *settingsPackage.Settings) error {
+func modFile(path string, info os.FileInfo, settings *settings.Settings) error {
 	filenameInRepoDir := strings.ReplaceAll(path,
 		fmt.Sprintf("%s%s", settings.GoPathSrc, settings.TemplateRepo),
 		"")
@@ -84,9 +85,17 @@ func modFile(path string, info os.FileInfo, settings *settingsPackage.Settings) 
 	if err != nil {
 		return err
 	}
-	defer modFile.Close()
+	defer func() {
+		if err := modFile.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	writer := bufio.NewWriter(modFile)
-	defer writer.Flush()
+	defer func() {
+		if err := writer.Flush(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	if err := temp.Execute(writer, *settings); err != nil {
 		return err
 	}
@@ -95,7 +104,7 @@ func modFile(path string, info os.FileInfo, settings *settingsPackage.Settings) 
 
 func cloneOrPull(goPathSrc, repo string) error {
 	repoDir := fmt.Sprintf("%s%s", goPathSrc, repo)
-	if files.IsDirExists(repoDir) {
+	if utils.IsDirExists(repoDir) {
 		if err := os.Chdir(repoDir); err != nil {
 			return err
 		}
