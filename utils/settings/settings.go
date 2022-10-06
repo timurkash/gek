@@ -24,15 +24,14 @@ type (
 		ServicePackage string `yaml:"servicePackage"`
 		KratosLayout   string `yaml:"kratosLayout"`
 		TemplateRepo   string `yaml:"templateRepo" valid:"required"`
-		ConfigVolume   string `yaml:"configVolume"`
-		Port           *Port  `yaml:"port"`
-		// Description
+
 		Project     string `yaml:"project"`
 		Email       string `yaml:"email" valid:"email"`
 		Description string `yaml:"description"`
 
+		ConfigVolume string
+		Port         *Port
 		ServiceLower string
-		//ServiceLower_ string
 		Repo         string
 		ProtoRepo    string
 		ProjectGroup string
@@ -60,9 +59,9 @@ func (s *Settings) LoadAndCheck() error {
 	if _, err := govalidator.ValidateStruct(s); err != nil {
 		return err
 	}
-	if s.ConfigVolume != "" && !strings.HasPrefix(s.ConfigVolume, "/") {
-		return errors.New(".settings.configVolume has not prefix /")
-	}
+	//if s.ConfigVolume != "" && !strings.HasPrefix(s.ConfigVolume, "/") {
+	//	return errors.New(".settings.configVolume has not prefix /")
+	//}
 	firstLetter := s.Service[:1]
 	if firstLetter != cases.Title(language.English).String(firstLetter) {
 		return errors.New(".settings.Service has to be in title case")
@@ -71,22 +70,28 @@ func (s *Settings) LoadAndCheck() error {
 	if s.ServicePackage == "" {
 		s.ServicePackage = strings.ToLower(s.Service)
 	}
-	if s.ConfigVolume == "" {
-		s.ConfigVolume = "/data/conf"
+	s.ConfigVolume = "/data/conf"
+	s.Port = &Port{
+		Grpc: 9000,
+		Http: 8000,
 	}
-	if s.Port != nil {
-		if s.Port.Grpc == 0 {
-			s.Port.Grpc = 9000
-		}
-		if s.Port.Http == 0 {
-			s.Port.Http = 8000
-		}
-	} else {
-		s.Port = &Port{
-			Grpc: 9000,
-			Http: 8000,
-		}
-	}
+
+	//if s.ConfigVolume == "" {
+	//	s.ConfigVolume = "/data/conf"
+	//}
+	//if s.Port != nil {
+	//	if s.Port.Grpc == 0 {
+	//		s.Port.Grpc = 9000
+	//	}
+	//	if s.Port.Http == 0 {
+	//		s.Port.Http = 8000
+	//	}
+	//} else {
+	//	s.Port = &Port{
+	//		Grpc: 9000,
+	//		Http: 8000,
+	//	}
+	//}
 	return nil
 }
 
