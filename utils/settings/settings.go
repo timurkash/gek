@@ -30,9 +30,10 @@ type (
 		Description string `yaml:"description"`
 
 		ConfigVolume string
-		Port         *Port
+		Port         *Port `yaml:"port"`
 		ServiceLower string
 		Repo         string
+		RepoGit      string
 		ProtoRepo    string
 		ProjectGroup string
 		GoPathSrc    string
@@ -127,6 +128,7 @@ func (s *Settings) CheckEnv(gen bool) error {
 	}
 	s.ProjectGroup = projectGroup
 	s.Repo = fmt.Sprintf("%s/back/%s", projectGroup, nameVersion)
+	s.RepoGit = fmt.Sprintf("git@%s.git", strings.Replace(s.Repo, "/", ":", 1))
 	if err := utils.IsExistsAll(); err != nil {
 		return err
 	}
