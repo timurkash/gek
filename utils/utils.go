@@ -30,6 +30,7 @@ var Utils = []Util{
 	{"protoc-gen-doc", "go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest"},
 	{"ent", "go install entgo.io/ent/cmd/ent@latest"},
 	{"goimports", "go install golang.org/x/tools/cmd/goimports@latest"},
+	{"golangci-lint", "go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1"},
 	{"bloomrpc", `download from https://github.com/bloomrpc/bloomrpc/releases
 run
 	sudo dpkg -i ~/Downloads/bloomrpc*amd64.deb`},
