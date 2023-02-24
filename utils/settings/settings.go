@@ -5,13 +5,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
+	"path"
+	"strings"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/timurkash/gek/utils"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
-	"os"
-	"strings"
 )
 
 const FileName = ".settings"
@@ -106,41 +108,40 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !gen && !dirExists {
 		return fmt.Errorf("directory %s not exists", nameVersion)
 	}
-	pwd, err := os.Getwd()
-	if err != nil {
+	var err error
+	if s.Pwd, err = os.Getwd(); err != nil {
 		return err
 	}
-	s.Pwd = pwd
-	goPathSrc := fmt.Sprintf("%s/src/", os.Getenv("GOPATH"))
+	goPathSrc := path.Join(os.Getenv("GOPATH"), utils.Src)
 	s.GoPathSrc = goPathSrc
-	if !strings.HasPrefix(pwd, goPathSrc) {
+	if !strings.HasPrefix(s.Pwd, goPathSrc) {
 		return errors.New("you are not in GOPATH")
 	}
-	projectGroupBack := pwd[len(goPathSrc):]
+	projectGroupBack := s.Pwd[len(goPathSrc)+1:]
 	i := strings.LastIndex(projectGroupBack, "/")
 	if projectGroupBack[i:] != "/back" {
 		return errors.New("you are not in /back directory")
 	}
 	projectGroup := projectGroupBack[:i]
-	s.ProtoRepo = fmt.Sprintf("%s/proto", projectGroup)
+	s.ProtoRepo = path.Join(projectGroup, utils.Proto)
 	if utils.IsDirExists(s.ProtoRepo) {
 		return errors.New("no /proto dir in projectGroup")
 	}
 	s.ProjectGroup = projectGroup
-	s.Repo = fmt.Sprintf("%s/back/%s", projectGroup, nameVersion)
+	s.Repo = path.Join(projectGroup, utils.Back, nameVersion)
 	s.GitRepo = fmt.Sprintf("git@%s.git", strings.Replace(s.Repo, "/", ":", 1))
 	if err := utils.IsExistsAll(); err != nil {
 		return err
 	}
-	srcProtoRepo := fmt.Sprintf("%s%s/proto/", s.GoPathSrc, s.ProjectGroup)
+	srcProtoRepo := path.Join(s.GoPathSrc, s.ProjectGroup, utils.Proto)
 	if !utils.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)
 	}
-	srcProtoRepoService := fmt.Sprintf("%sapi/%s/", srcProtoRepo, s.ServicePackage)
+	srcProtoRepoService := path.Join(srcProtoRepo, utils.Api, s.ServicePackage)
 	if !utils.IsDirExists(srcProtoRepoService) {
 		return fmt.Errorf("%s not exists", srcProtoRepoService)
 	}
-	srcProtoRepoServiceProto := fmt.Sprintf("%s%s.proto", srcProtoRepoService, s.ServicePackage)
+	srcProtoRepoServiceProto := path.Join(srcProtoRepoService, fmt.Sprintf("%s.proto", s.ServicePackage))
 	fileBytes, err := os.ReadFile(srcProtoRepoServiceProto)
 	if err != nil {
 		return err
@@ -155,7 +156,8 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !bytes.Contains(fileBytes, []byte(packageService)) {
 		return fmt.Errorf("%s not contains package %s", srcProtoRepoServiceProto, packageService)
 	}
-	goOption := fmt.Sprintf(`option go_package = "%s/proto/gen/go/api/%s;%s";`, s.ProjectGroup, s.ServicePackage, s.ServicePackage)
+	goOption := fmt.Sprintf(`option go_package = "%s/proto/gen/go/api/%s;%s";`,
+		s.ProjectGroup, s.ServicePackage, s.ServicePackage)
 	if !bytes.Contains(fileBytes, []byte(goOption)) {
 		return fmt.Errorf("%s not contains go_option %s", srcProtoRepoServiceProto, goOption)
 	}

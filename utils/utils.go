@@ -12,6 +12,13 @@ type Util struct {
 	Command string
 }
 
+const (
+	Api   = "api"
+	Src   = "src"
+	Back  = "back"
+	Proto = "proto"
+)
+
 var Utils = []Util{
 	{"go", "https://go.dev/doc/install"},
 	{"git", "sudo apt install git"},

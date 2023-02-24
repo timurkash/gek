@@ -6,6 +6,7 @@ import (
 	"github.com/timurkash/gek/utils"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -21,11 +22,11 @@ func downloadAndReplaceFromTemplateRepo(settings *settings.Settings) error {
 	}
 	templateRepo = strings.ReplaceAll(templateRepo, "https://", "")
 	templateRepo = strings.ReplaceAll(templateRepo, ".git", "")
-	repoDir := fmt.Sprintf("%s%s", settings.GoPathSrc, templateRepo)
+	repoDir := path.Join(settings.GoPathSrc, templateRepo)
 	if err := cloneOrPull(settings.GoPathSrc, templateRepo); err != nil {
 		return err
 	}
-	projectDir := fmt.Sprintf("%s%s", settings.GoPathSrc, settings.Repo)
+	projectDir := path.Join(settings.GoPathSrc, settings.Repo)
 	if err := os.Chdir(projectDir); err != nil {
 		return err
 	}
@@ -50,9 +51,9 @@ func downloadAndReplaceFromTemplateRepo(settings *settings.Settings) error {
 	return nil
 }
 
-func modFile(path string, info os.FileInfo, settings *settings.Settings) error {
-	filenameInRepoDir := strings.ReplaceAll(path,
-		fmt.Sprintf("%s%s", settings.GoPathSrc, settings.TemplateRepo),
+func modFile(pathString string, info os.FileInfo, settings *settings.Settings) error {
+	filenameInRepoDir := strings.ReplaceAll(pathString,
+		path.Join(settings.GoPathSrc, settings.TemplateRepo),
 		"")
 	if info.IsDir() {
 		if filenameInRepoDir == "" {
@@ -61,13 +62,13 @@ func modFile(path string, info os.FileInfo, settings *settings.Settings) error {
 		if _, err := commands.Exec(
 			"mkdir",
 			"-p",
-			fmt.Sprintf("%s/%s%s", settings.Pwd, settings.NameVersion, filenameInRepoDir),
+			path.Join(settings.Pwd, settings.NameVersion, filenameInRepoDir),
 		); err != nil {
 			return err
 		}
 		return nil
 	}
-	bytes, err := os.ReadFile(path)
+	bytes, err := os.ReadFile(pathString)
 	if err != nil {
 		return err
 	}
@@ -81,7 +82,7 @@ func modFile(path string, info os.FileInfo, settings *settings.Settings) error {
 	if filenameInRepoDir == "/gitlab-ci.yml" {
 		filenameInRepoDir = "/.gitlab-ci.yml"
 	}
-	modFile, err := os.Create(fmt.Sprintf("%s%s%s", settings.GoPathSrc, settings.Repo, filenameInRepoDir))
+	modFile, err := os.Create(path.Join(settings.GoPathSrc, settings.Repo, filenameInRepoDir))
 	if err != nil {
 		return err
 	}
@@ -103,7 +104,7 @@ func modFile(path string, info os.FileInfo, settings *settings.Settings) error {
 }
 
 func cloneOrPull(goPathSrc, repo string) error {
-	repoDir := fmt.Sprintf("%s%s", goPathSrc, repo)
+	repoDir := path.Join(goPathSrc, repo)
 	if utils.IsDirExists(repoDir) {
 		if err := os.Chdir(repoDir); err != nil {
 			return err

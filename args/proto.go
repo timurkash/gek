@@ -3,15 +3,17 @@ package args
 import (
 	"bufio"
 	"fmt"
+	"github.com/timurkash/gek/utils"
 	"github.com/timurkash/gek/utils/settings"
 	"log"
 	"os"
+	"path"
 	"strings"
 )
 
 func processProto(settings *settings.Settings) error {
-	srcProtoRepo := fmt.Sprintf("%s%s/proto/", settings.GoPathSrc, settings.ProjectGroup)
-	file, err := os.Open(fmt.Sprintf("%sinternal/service/%s.go", srcProtoRepo, settings.ServicePackage))
+	srcProtoRepo := path.Join(settings.GoPathSrc, settings.ProjectGroup, utils.Proto)
+	file, err := os.Open(path.Join(srcProtoRepo, "internal/service", fmt.Sprintf("%s.go", settings.ServicePackage)))
 	if err != nil {
 		return err
 	}
@@ -21,7 +23,7 @@ func processProto(settings *settings.Settings) error {
 		}
 	}()
 	scanner := bufio.NewScanner(file)
-	fileWrite, err := os.Create(fmt.Sprintf("%s%s/internal/service/greeter.go", settings.GoPathSrc, settings.Repo))
+	fileWrite, err := os.Create(path.Join(settings.GoPathSrc, settings.Repo, "internal/service/greeter.go"))
 	if err != nil {
 		return err
 	}
