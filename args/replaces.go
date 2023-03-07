@@ -6,7 +6,6 @@ import (
 	"github.com/timurkash/gek/utils"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -22,11 +21,11 @@ func downloadAndReplaceFromTemplateRepo(settings *settings.Settings) error {
 	}
 	templateRepo = strings.ReplaceAll(templateRepo, "https://", "")
 	templateRepo = strings.ReplaceAll(templateRepo, ".git", "")
-	repoDir := path.Join(settings.GoPathSrc, templateRepo)
+	repoDir := filepath.Join(settings.GoPathSrc, templateRepo)
 	if err := cloneOrPull(settings.GoPathSrc, templateRepo); err != nil {
 		return err
 	}
-	projectDir := path.Join(settings.GoPathSrc, settings.Repo)
+	projectDir := filepath.Join(settings.GoPathSrc, settings.Repo)
 	if err := os.Chdir(projectDir); err != nil {
 		return err
 	}
@@ -53,7 +52,7 @@ func downloadAndReplaceFromTemplateRepo(settings *settings.Settings) error {
 
 func modFile(pathString string, info os.FileInfo, settings *settings.Settings) error {
 	filenameInRepoDir := strings.ReplaceAll(pathString,
-		path.Join(settings.GoPathSrc, settings.TemplateRepo),
+		filepath.Join(settings.GoPathSrc, settings.TemplateRepo),
 		"")
 	if info.IsDir() {
 		if filenameInRepoDir == "" {
@@ -62,7 +61,7 @@ func modFile(pathString string, info os.FileInfo, settings *settings.Settings) e
 		if _, err := commands.Exec(
 			"mkdir",
 			"-p",
-			path.Join(settings.Pwd, settings.NameVersion, filenameInRepoDir),
+			filepath.Join(settings.Pwd, settings.NameVersion, filenameInRepoDir),
 		); err != nil {
 			return err
 		}
@@ -82,7 +81,7 @@ func modFile(pathString string, info os.FileInfo, settings *settings.Settings) e
 	if filenameInRepoDir == "/gitlab-ci.yml" {
 		filenameInRepoDir = "/.gitlab-ci.yml"
 	}
-	modFile, err := os.Create(path.Join(settings.GoPathSrc, settings.Repo, filenameInRepoDir))
+	modFile, err := os.Create(filepath.Join(settings.GoPathSrc, settings.Repo, filenameInRepoDir))
 	if err != nil {
 		return err
 	}
@@ -104,7 +103,7 @@ func modFile(pathString string, info os.FileInfo, settings *settings.Settings) e
 }
 
 func cloneOrPull(goPathSrc, repo string) error {
-	repoDir := path.Join(goPathSrc, repo)
+	repoDir := filepath.Join(goPathSrc, repo)
 	if utils.IsDirExists(repoDir) {
 		if err := os.Chdir(repoDir); err != nil {
 			return err

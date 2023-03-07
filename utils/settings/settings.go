@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/asaskevich/govalidator"
@@ -112,7 +112,7 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if s.Pwd, err = os.Getwd(); err != nil {
 		return err
 	}
-	goPathSrc := path.Join(os.Getenv("GOPATH"), utils.Src)
+	goPathSrc := filepath.Join(os.Getenv("GOPATH"), utils.Src)
 	s.GoPathSrc = goPathSrc
 	if !strings.HasPrefix(s.Pwd, goPathSrc) {
 		return errors.New("you are not in GOPATH")
@@ -123,25 +123,25 @@ func (s *Settings) CheckEnv(gen bool) error {
 		return errors.New("you are not in /back directory")
 	}
 	projectGroup := projectGroupBack[:i]
-	s.ProtoRepo = path.Join(projectGroup, utils.Proto)
+	s.ProtoRepo = filepath.Join(projectGroup, utils.Proto)
 	if utils.IsDirExists(s.ProtoRepo) {
 		return errors.New("no /proto dir in projectGroup")
 	}
 	s.ProjectGroup = projectGroup
-	s.Repo = path.Join(projectGroup, utils.Back, nameVersion)
+	s.Repo = filepath.Join(projectGroup, utils.Back, nameVersion)
 	s.GitRepo = fmt.Sprintf("git@%s.git", strings.Replace(s.Repo, "/", ":", 1))
 	if err := utils.IsExistsAll(); err != nil {
 		return err
 	}
-	srcProtoRepo := path.Join(s.GoPathSrc, s.ProjectGroup, utils.Proto)
+	srcProtoRepo := filepath.Join(s.GoPathSrc, s.ProjectGroup, utils.Proto)
 	if !utils.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)
 	}
-	srcProtoRepoService := path.Join(srcProtoRepo, utils.Api, s.ServicePackage)
+	srcProtoRepoService := filepath.Join(srcProtoRepo, utils.Api, s.ServicePackage)
 	if !utils.IsDirExists(srcProtoRepoService) {
 		return fmt.Errorf("%s not exists", srcProtoRepoService)
 	}
-	srcProtoRepoServiceProto := path.Join(srcProtoRepoService, fmt.Sprintf("%s.proto", s.ServicePackage))
+	srcProtoRepoServiceProto := filepath.Join(srcProtoRepoService, fmt.Sprintf("%s.proto", s.ServicePackage))
 	fileBytes, err := os.ReadFile(srcProtoRepoServiceProto)
 	if err != nil {
 		return err

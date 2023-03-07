@@ -6,7 +6,7 @@ import (
 	"github.com/timurkash/gek/utils"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -32,11 +32,11 @@ func ArgHttpServer() error {
 	for _, file := range dirFiles {
 		if file.IsDir() {
 			name := file.Name()
-			service, err := getService(path.Join(utils.Api, name, fmt.Sprintf("%s.proto", name)))
+			service, err := getService(filepath.Join(utils.Api, name, fmt.Sprintf("%s.proto", name)))
 			if err != nil {
 				return err
 			}
-			filename := path.Join("gen/go/api", name, fmt.Sprintf("%s_http.pb.go", name))
+			filename := filepath.Join("gen/go/api", name, fmt.Sprintf("%s_http.pb.go", name))
 			if !utils.IsExists(filename) {
 				if err := rewriteFile(temp, filename, &Service{
 					Name:    name,
