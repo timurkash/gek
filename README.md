@@ -25,6 +25,8 @@ GEnerate Kratos
 
 back & front projects apply to common proto 
 
-Workdir of gek is back with .settings file
+Workdir for gek is `back` with `.settings` file
 
-Also gek works in local dir with services.yaml file
+This utility can be used as tool for business-oriented resource development 
+
+The development methodology is described in https://www.youtube.com/watch?v=5OkPz78Xk3M (russian)
