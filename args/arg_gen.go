@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func ArgGen() error {
+func Generate() error {
 	settings := new(settingsPackage.Settings)
 	if err := settings.LoadAndCheck(); err != nil {
 		return err

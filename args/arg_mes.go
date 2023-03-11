@@ -12,7 +12,7 @@ var (
 	eof       = []byte("\n")
 )
 
-func ArgMessagesServer() error {
+func MessagesServer() error {
 	err := filepath.Walk("gen/go", func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && strings.HasSuffix(path, ".pb.go") {
 			if err := changeMessages(path, info.Mode().Perm()); err != nil {

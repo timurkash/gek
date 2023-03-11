@@ -17,8 +17,10 @@ Wire: https://github.com/google/wire
 gRPC: https://grpc.io/docs/languages/go/quickstart/
 
 Options:
-	-gen - project generation. .settings file required
+	-gen - project generation (run inside 'back' folder with '.settings' file) 
 	-utl - lists utils to be installed
+	-htp - creating empty http-server (eg for /metrics) (run inside 'proto' folder)
+	-mes - justify json tag name to protobuf one (proto field annotations is [json_name=name]) (run inside 'proto' folder) 
 
 .settings file described in`
 
@@ -63,12 +65,12 @@ service: Service
 kratosLayout: https://github.com/timurkash/kratos-layout.git
 templateRepo: your template repo
 
-project: the-map
-email: t.kashaev@mapcard.pro
-description: BackOffice Payment Router
+project: project
+email: email@example.com
+description: Description
 
 The cimis of this bootstrapper is to rewrite files set in template repo settings.TempRepo
-And the template project is ready to modify. The files to be rewrote is `)
+And the template project is ready to modify. The files to be rewrite is `)
 	files := []string{
 		".dockerignore",
 		".gitignore",

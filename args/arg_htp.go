@@ -16,7 +16,7 @@ type Service struct {
 	Service string
 }
 
-func ArgHttpServer() error {
+func HttpServer() error {
 	dirRead, err := os.Open("api")
 	if err != nil {
 		return err

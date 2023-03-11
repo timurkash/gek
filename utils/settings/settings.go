@@ -130,9 +130,6 @@ func (s *Settings) CheckEnv(gen bool) error {
 	s.ProjectGroup = projectGroup
 	s.Repo = filepath.Join(projectGroup, utils.Back, nameVersion)
 	s.GitRepo = fmt.Sprintf("git@%s.git", strings.Replace(s.Repo, "/", ":", 1))
-	if err := utils.IsExistsAll(); err != nil {
-		return err
-	}
 	srcProtoRepo := filepath.Join(s.GoPathSrc, s.ProjectGroup, utils.Proto)
 	if !utils.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)

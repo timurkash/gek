@@ -1,51 +1,45 @@
 package main
 
 import (
-	"fmt"
+	"errors"
+	"flag"
 	"github.com/timurkash/gek/args"
-	"github.com/timurkash/gek/utils"
 	"log"
 	"os"
+)
+
+var (
+	utl = flag.Bool("utl", false, "required utils")
+	chk = flag.Bool("chk", false, "check if all utils is installed")
+	gen = flag.Bool("gen", false, "generate the service project")
+	htp = flag.Bool("htp", false, "generate empty http-server")
+	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
 )
 
 func main() {
 	log.SetPrefix("[>error<] ")
 	log.SetFlags(0)
+	flag.Parse()
 	argsStrings := os.Args
-	if len(argsStrings) == 1 {
+	if len(argsStrings) != 2 {
 		args.ShowDescription()
 		return
 	}
-	arg := argsStrings[1]
-	if len(arg) != 4 {
-		log.Fatalln("argument must be 4 characters")
+	var err error
+	if *utl {
+		args.ShowUtils()
+	} else if *chk {
+		err = args.Check()
+	} else if *gen {
+		err = args.Generate()
+	} else if *htp {
+		err = args.HttpServer()
+	} else if *mes {
+		err = args.MessagesServer()
+	} else {
+		err = errors.New("unknown option")
 	}
-	if arg[0] != '-' {
-		log.Fatalln("argument must begin with dash")
-	}
-	switch arg {
-	case "-utl":
-		fmt.Println("required utils:")
-		for _, util := range utils.Utils {
-			if err := utils.IsUtilExists(util.Name); err != nil {
-				fmt.Printf(" - %s: To install run '%s'\n", util.Name, util.Command)
-			} else {
-				fmt.Printf(" - %s: installed\n", util.Name)
-			}
-		}
-	case "-gen":
-		if err := args.ArgGen(); err != nil {
-			log.Fatalln(err)
-		}
-	case "-htp":
-		if err := args.ArgHttpServer(); err != nil {
-			log.Fatalln(err)
-		}
-	case "-mes":
-		if err := args.ArgMessagesServer(); err != nil {
-			log.Fatalln(err)
-		}
-	default:
-		log.Fatalf("option %s not defined\n", arg)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }
