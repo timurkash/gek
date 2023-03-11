@@ -61,7 +61,7 @@ func modFile(pathString string, info os.FileInfo, settings *settings.Settings) e
 		if _, err := commands.Exec(
 			"mkdir",
 			"-p",
-			filepath.Join(settings.Pwd, settings.NameVersion, filenameInRepoDir),
+			filepath.Join(settings.BackDir, settings.NameVersion, filenameInRepoDir),
 		); err != nil {
 			return err
 		}

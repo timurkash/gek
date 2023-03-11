@@ -34,7 +34,7 @@ run
 	sudo dpkg -i ~/Downloads/bloomrpc*.deb`},
 }
 
-func ShowUtils() {
+func ShowUtils() error {
 	fmt.Println("required utils:")
 	for _, util := range Utils {
 		if err := utils.IsUtilExists(util.Name); err != nil {
@@ -43,4 +43,5 @@ func ShowUtils() {
 			fmt.Printf(" - %s: installed\n", util.Name)
 		}
 	}
+	return nil
 }

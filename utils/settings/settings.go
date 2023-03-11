@@ -39,7 +39,7 @@ type (
 		ProtoRepo    string
 		ProjectGroup string
 		GoPathSrc    string
-		Pwd          string
+		BackDir      string
 		NameVersion  string
 	}
 	Port struct {
@@ -109,15 +109,15 @@ func (s *Settings) CheckEnv(gen bool) error {
 		return fmt.Errorf("directory %s not exists", nameVersion)
 	}
 	var err error
-	if s.Pwd, err = os.Getwd(); err != nil {
+	if s.BackDir, err = os.Getwd(); err != nil {
 		return err
 	}
 	goPathSrc := filepath.Join(os.Getenv("GOPATH"), utils.Src)
 	s.GoPathSrc = goPathSrc
-	if !strings.HasPrefix(s.Pwd, goPathSrc) {
+	if !strings.HasPrefix(s.BackDir, goPathSrc) {
 		return errors.New("you are not in GOPATH")
 	}
-	projectGroupBack := s.Pwd[len(goPathSrc)+1:]
+	projectGroupBack := s.BackDir[len(goPathSrc)+1:]
 	i := strings.LastIndex(projectGroupBack, "/")
 	if projectGroupBack[i:] != "/back" {
 		return errors.New("you are not in /back directory")

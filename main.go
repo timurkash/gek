@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"github.com/timurkash/gek/args"
 	"log"
@@ -16,30 +15,30 @@ var (
 	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
 )
 
+var argFunc func() error
+
 func main() {
 	log.SetPrefix("[>error<] ")
 	log.SetFlags(0)
 	flag.Parse()
-	argsStrings := os.Args
-	if len(argsStrings) != 2 {
+	if len(os.Args) != 2 {
 		args.ShowDescription()
-		return
-	}
-	var err error
-	if *utl {
-		args.ShowUtils()
-	} else if *chk {
-		err = args.Check()
-	} else if *gen {
-		err = args.Generate()
-	} else if *htp {
-		err = args.HttpServer()
-	} else if *mes {
-		err = args.MessagesServer()
 	} else {
-		err = errors.New("unknown option")
-	}
-	if err != nil {
-		log.Fatalln(err)
+		if *utl {
+			argFunc = args.ShowUtils
+		} else if *chk {
+			argFunc = args.Check
+		} else if *gen {
+			argFunc = args.Generate
+		} else if *htp {
+			argFunc = args.HttpServer
+		} else if *mes {
+			argFunc = args.MessagesServer
+		} else {
+			log.Fatalln("unknown option")
+		}
+		if err := argFunc(); err != nil {
+			log.Fatalln(err)
+		}
 	}
 }

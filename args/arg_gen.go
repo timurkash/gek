@@ -21,7 +21,9 @@ func Generate() error {
 		kratosNew = fmt.Sprintf("%s -r %s", kratosNew, settings.KratosLayout)
 	}
 	scriptCommands := []string{
+		fmt.Sprintf("cd %s", settings.GoPathSrc),
 		kratosNew,
+		fmt.Sprintf("cd %s", settings.BackDir),
 		"kratos -v",
 		fmt.Sprintf("cp .settings %s", settings.NameVersion),
 		fmt.Sprintf("cd %s", settings.NameVersion),
