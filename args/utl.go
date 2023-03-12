@@ -2,7 +2,10 @@ package args
 
 import (
 	"fmt"
+
 	"github.com/timurkash/gek/utils"
+
+	"github.com/fatih/color"
 )
 
 type Util struct {
@@ -36,11 +39,13 @@ run
 
 func ShowUtils() error {
 	fmt.Println("required utils:")
+	green := color.New(color.FgGreen).SprintFunc()
+	blue := color.New(color.BgBlue).SprintFunc()
 	for _, util := range Utils {
 		if err := utils.IsUtilExists(util.Name); err != nil {
-			fmt.Printf(" - %s: To install run '%s'\n", util.Name, util.Command)
+			fmt.Printf(" - %s: To install run '%s'\n", util.Name, blue(util.Command))
 		} else {
-			fmt.Printf(" - %s: installed\n", util.Name)
+			fmt.Printf(" - %s: %s\n", util.Name, green("installed"))
 		}
 	}
 	return nil
