@@ -52,6 +52,11 @@ func executeScriptCommands(scriptCommands []string) error {
 			if err := os.Chdir(words[1]); err != nil {
 				return err
 			}
+			wd, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+			fmt.Println("current dir is", wd)
 		} else {
 			if err := commands.ExecOnline(command, words[1:]...); err != nil {
 				return err
