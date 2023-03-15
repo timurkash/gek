@@ -66,18 +66,20 @@ func executeScriptCommands(scriptCommands []string) error {
 	return nil
 }
 
+const tsn = "\t%s\n"
+
 func printDetails(nameVersion string) {
-	fmt.Println("\nMake")
-	fmt.Println("\tcd", nameVersion)
-	fmt.Println("\tmake init-all")
-	fmt.Println("To use ent.ORM you can")
-	fmt.Println("\tmake init-ent")
-	fmt.Println("To build")
-	fmt.Println("\tmake build")
-	fmt.Println("To run")
-	fmt.Println("\tmake run")
-	fmt.Println("To init push")
-	fmt.Println("\tmake init-push")
-	fmt.Println("To upgrade kratos")
-	fmt.Println("\tkratos upgrade")
+	fmt.Printf("\nMake\n")
+	fmt.Printf(tsn, blue(fmt.Sprintf("cd %s", nameVersion)))
+	fmt.Printf(tsn, blue("make init-all"))
+	fmt.Printf("To use ent.ORM you can\n")
+	fmt.Printf(tsn, blue("make init-ent"))
+	fmt.Printf("To build\n")
+	fmt.Printf(tsn, blue("make build"))
+	fmt.Printf("To run\n")
+	fmt.Printf(tsn, blue("make run"))
+	fmt.Printf("To init push\n")
+	fmt.Printf(tsn, blue("make init-push"))
+	fmt.Printf("To upgrade kratos\n")
+	fmt.Printf(tsn, blue("kratos upgrade"))
 }

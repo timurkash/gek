@@ -2,13 +2,17 @@ package commands
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"io"
 	"os/exec"
 	"strings"
 )
 
+var blue = color.New(color.BgBlue).SprintFunc()
+
 func ExecOnline(name string, args ...string) error {
-	fmt.Println(name, strings.Join(args, " "))
+	line := fmt.Sprintf("%s %s", name, strings.Join(args, " "))
+	fmt.Printf("%s\n", blue(line))
 	cmd := exec.Command(name, args...)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

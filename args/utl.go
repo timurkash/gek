@@ -13,6 +13,9 @@ type Util struct {
 	Command string
 }
 
+var green = color.New(color.FgGreen).SprintFunc()
+var blue = color.New(color.BgBlue).SprintFunc()
+
 var Utils = []Util{
 	{"go", "https://go.dev/doc/install"},
 	{"git", "sudo apt install git"},
@@ -39,8 +42,6 @@ run
 
 func ShowUtils() error {
 	fmt.Println("required utils:")
-	green := color.New(color.FgGreen).SprintFunc()
-	blue := color.New(color.BgBlue).SprintFunc()
 	for _, util := range Utils {
 		if err := utils.IsUtilExists(util.Name); err != nil {
 			fmt.Printf(" - %s: To install run '%s'\n", util.Name, blue(util.Command))
