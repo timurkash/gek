@@ -17,27 +17,23 @@ type Service struct {
 }
 
 func HttpServer() error {
-	dirRead, err := os.Open("api")
-	if err != nil {
-		return err
-	}
-	dirFiles, err := dirRead.ReadDir(0)
-	if err != nil {
-		return err
-	}
 	temp := template.New("http_server")
 	if _, err := temp.Parse(httpServer); err != nil {
 		return err
 	}
-	for _, file := range dirFiles {
-		if file.IsDir() {
-			name := file.Name()
-			service, err := getService(filepath.Join(utils.Api, name, fmt.Sprintf("%s.proto", name)))
-			if err != nil {
-				return err
-			}
-			filename := filepath.Join("gen/go/api", name, fmt.Sprintf("%s_http.pb.go", name))
-			if !utils.IsExists(filename) {
+	if err := filepath.WalkDir(utils.Api, func(path string, dirEntry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if dirEntry.IsDir() {
+			name := dirEntry.Name()
+			protoFilename := fmt.Sprintf("%s/%s.proto", path, name)
+			if utils.IsExists(protoFilename) {
+				service, err := getService(protoFilename)
+				if err != nil {
+					return err
+				}
+				filename := filepath.Join("gen/go/", path, fmt.Sprintf("%s_http.pb.go", name))
 				if err := rewriteFile(temp, filename, &Service{
 					Name:    name,
 					Service: service,
@@ -46,6 +42,9 @@ func HttpServer() error {
 				}
 			}
 		}
+		return nil
+	}); err != nil {
+		return err
 	}
 	return nil
 }
