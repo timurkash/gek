@@ -21,24 +21,24 @@ func main() {
 	log.SetPrefix("[>error<] ")
 	log.SetFlags(0)
 	flag.Parse()
-	if len(os.Args) != 2 {
+	if len(os.Args) == 1 {
 		args.ShowDescription()
+		return
+	}
+	if *utl {
+		argFunc = args.ShowUtils
+	} else if *chk {
+		argFunc = args.Check
+	} else if *gen {
+		argFunc = args.Generate
+	} else if *htp {
+		argFunc = args.HttpServer
+	} else if *mes {
+		argFunc = args.MessagesServer
 	} else {
-		if *utl {
-			argFunc = args.ShowUtils
-		} else if *chk {
-			argFunc = args.Check
-		} else if *gen {
-			argFunc = args.Generate
-		} else if *htp {
-			argFunc = args.HttpServer
-		} else if *mes {
-			argFunc = args.MessagesServer
-		} else {
-			log.Fatalln("unknown option")
-		}
-		if err := argFunc(); err != nil {
-			log.Fatalln(err)
-		}
+		log.Fatalln("unknown option")
+	}
+	if err := argFunc(); err != nil {
+		log.Fatalln(err)
 	}
 }

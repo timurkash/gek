@@ -48,6 +48,8 @@ type (
 	}
 )
 
+var cas = cases.Title(language.English)
+
 func (s *Settings) LoadAndCheck() error {
 	if !utils.IsFileExists(FileName) {
 		return fmt.Errorf("go settings file %s is not exists in current directory", FileName)
@@ -66,7 +68,7 @@ func (s *Settings) LoadAndCheck() error {
 	//	return errors.New(".settings.configVolume has not prefix /")
 	//}
 	firstLetter := s.Service[:1]
-	if firstLetter != cases.Title(language.English).String(firstLetter) {
+	if firstLetter != cas.String(firstLetter) {
 		return errors.New(".settings.Service has to be in title case")
 	}
 	s.ServiceLower = fmt.Sprintf("%s%s", strings.ToLower(s.Service[:1]), s.Service[1:])
@@ -119,7 +121,7 @@ func (s *Settings) CheckEnv(gen bool) error {
 	}
 	projectGroupBack := s.BackDir[len(goPathSrc)+1:]
 	i := strings.LastIndex(projectGroupBack, "/")
-	if projectGroupBack[i:] != "/back" {
+	if projectGroupBack[i:] != "/"+utils.Back {
 		return errors.New("you are not in /back directory")
 	}
 	projectGroup := projectGroupBack[:i]
