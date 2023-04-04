@@ -136,6 +136,10 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !utils.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)
 	}
+	srcProtoInternalService := filepath.Join(srcProtoRepo, "internal", "service", fmt.Sprintf("%s.go", s.ServiceLower))
+	if !utils.IsFileExists(srcProtoInternalService) {
+		return fmt.Errorf("%s not exists", srcProtoInternalService)
+	}
 	srcProtoRepoService := filepath.Join(srcProtoRepo, utils.Api, s.ServicePackage)
 	if !utils.IsDirExists(srcProtoRepoService) {
 		return fmt.Errorf("%s not exists", srcProtoRepoService)
