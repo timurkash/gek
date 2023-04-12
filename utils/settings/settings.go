@@ -21,7 +21,7 @@ const FileName = ".settings"
 type (
 	Settings struct {
 		Name           string `yaml:"name" valid:"required,lowercase"`
-		Version        string `yaml:"version" valid:"required,lowercase"`
+		Version        string `yaml:"version"`
 		Service        string `yaml:"service" valid:"required"`
 		ServicePackage string `yaml:"servicePackage"`
 		KratosLayout   string `yaml:"kratosLayout"`
@@ -65,9 +65,9 @@ func (s *Settings) LoadAndCheck() error {
 	if _, err := govalidator.ValidateStruct(s); err != nil {
 		return err
 	}
-	//if s.ConfigVolume != "" && !strings.HasPrefix(s.ConfigVolume, "/") {
-	//	return errors.New(".settings.configVolume has not prefix /")
-	//}
+	if s.Version == "" {
+		s.Version = "v1"
+	}
 	firstLetter := s.Service[:1]
 	if firstLetter != cas.String(firstLetter) {
 		return errors.New(".settings.Service has to be in title case")

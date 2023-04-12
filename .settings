@@ -1,5 +1,4 @@
 name: name
-version: v1
 service: ServiceFromProto
 servicePackage: servicepackage
 kratosLayout: https://github.com/timurkash/kratos-layout.git
