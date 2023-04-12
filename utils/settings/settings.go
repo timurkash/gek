@@ -31,16 +31,17 @@ type (
 		Email       string `yaml:"email" valid:"email"`
 		Description string `yaml:"description"`
 
-		ConfigVolume string
-		Port         *Port `yaml:"port"`
-		ServiceLower string
-		Repo         string
-		GitRepo      string
-		ProtoRepo    string
-		ProjectGroup string
-		GoPathSrc    string
-		BackDir      string
-		NameVersion  string
+		ConfigVolume      string
+		Port              *Port `yaml:"port"`
+		ServiceLower      string
+		ServiceLowerLower string
+		Repo              string
+		GitRepo           string
+		ProtoRepo         string
+		ProjectGroup      string
+		GoPathSrc         string
+		BackDir           string
+		NameVersion       string
 	}
 	Port struct {
 		Grpc int `yaml:"grpc" valid:"int"`
@@ -72,6 +73,7 @@ func (s *Settings) LoadAndCheck() error {
 		return errors.New(".settings.Service has to be in title case")
 	}
 	s.ServiceLower = fmt.Sprintf("%s%s", strings.ToLower(s.Service[:1]), s.Service[1:])
+	s.ServiceLowerLower = strings.ToLower(s.Service)
 	if s.ServicePackage == "" {
 		s.ServicePackage = strings.ToLower(s.Service)
 	}
@@ -136,7 +138,7 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !utils.IsDirExists(srcProtoRepo) {
 		return fmt.Errorf("%s not exists", srcProtoRepo)
 	}
-	srcProtoInternalService := filepath.Join(srcProtoRepo, "internal", "service", fmt.Sprintf("%s.go", s.ServiceLower))
+	srcProtoInternalService := filepath.Join(srcProtoRepo, "internal", "service", fmt.Sprintf("%s.go", s.ServiceLowerLower))
 	if !utils.IsFileExists(srcProtoInternalService) {
 		return fmt.Errorf("%s not exists", srcProtoInternalService)
 	}
