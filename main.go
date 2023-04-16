@@ -13,6 +13,7 @@ var (
 	gen = flag.Bool("gen", false, "generate the service project")
 	htp = flag.Bool("htp", false, "generate empty http-server")
 	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
+	ser = flag.Bool("ser", false, "some replaces in internal/service")
 )
 
 var argFunc func() error
@@ -35,6 +36,8 @@ func main() {
 		argFunc = args.HttpServer
 	} else if *mes {
 		argFunc = args.MessagesServer
+	} else if *ser {
+		argFunc = args.Services
 	} else {
 		log.Fatalln("unknown option")
 	}
