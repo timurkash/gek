@@ -23,7 +23,7 @@ func processProto(settings *settings.Settings) error {
 		}
 	}()
 	scanner := bufio.NewScanner(file)
-	fileWrite, err := os.Create(filepath.Join(settings.GoPathSrc, settings.Repo, "internal/service/service.go"))
+	fileWrite, err := os.Create(filepath.Join(settings.GoPathSrc, settings.Repo, "internal", "service", "service.go"))
 	if err != nil {
 		return err
 	}
