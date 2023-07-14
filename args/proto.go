@@ -23,7 +23,7 @@ func processProto(settings *settings.Settings) error {
 		}
 	}()
 	scanner := bufio.NewScanner(file)
-	fileWrite, err := os.Create(filepath.Join(settings.GoPathSrc, settings.Repo, "internal/service/greeter.go"))
+	fileWrite, err := os.Create(filepath.Join(settings.GoPathSrc, settings.Repo, "internal/service/service.go"))
 	if err != nil {
 		return err
 	}
@@ -34,9 +34,15 @@ func processProto(settings *settings.Settings) error {
 		writeLine = true
 		if line == ")" {
 			if _, err := writer.WriteString(fmt.Sprintf(`
+	"github.com/google/wire"
+
 	"github.com/go-kratos/kratos/v2/log"
+
 	"%s/internal/biz"
-`, settings.Repo)); err != nil {
+)
+
+// ProviderSet is service providers.
+var ProviderSet = wire.NewSet(NewIncidentService`, settings.Repo)); err != nil {
 				return err
 			}
 		} else if strings.HasPrefix(line, "\tpb.Unimplemented") {
