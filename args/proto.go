@@ -42,7 +42,7 @@ func processProto(settings *settings.Settings) error {
 )
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewIncidentService`, settings.Repo)); err != nil {
+var ProviderSet = wire.NewSet(New%sService`, settings.Repo, settings.Service)); err != nil {
 				return err
 			}
 		} else if strings.HasPrefix(line, "\tpb.Unimplemented") {
