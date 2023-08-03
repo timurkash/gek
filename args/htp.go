@@ -34,11 +34,13 @@ func HttpServer() error {
 					return err
 				}
 				filename := filepath.Join("gen/go/", path, fmt.Sprintf("%s_http.pb.go", name))
-				if err := rewriteFile(temp, filename, &Service{
-					Name:    name,
-					Service: service,
-				}); err != nil {
-					return err
+				if !utils.IsFileExists(filename) {
+					if err := rewriteFile(temp, filename, &Service{
+						Name:    name,
+						Service: service,
+					}); err != nil {
+						return err
+					}
 				}
 			}
 		}
