@@ -10,6 +10,7 @@ import (
 var (
 	bytesJson = []byte(",json=")
 	eof       = []byte("\n")
+	comma     = []byte(",")
 )
 
 func MessagesServer() error {
@@ -32,21 +33,17 @@ func changeMessages(path string, perm os.FileMode) error {
 	if err != nil {
 		return err
 	}
-	if bytes.Contains(bytesIn, bytesJson) {
-		lines := bytes.Split(bytesIn, eof)
-		for i, line := range lines {
-			if bytes.Contains(line, bytesJson) {
-				lines[i] = changeLine(line)
-			}
-		}
-		if err := os.WriteFile(path, bytes.Join(lines, eof), perm); err != nil {
-			return err
+	if !bytes.Contains(bytesIn, bytesJson) {
+		return nil
+	}
+	lines := bytes.Split(bytesIn, eof)
+	for i, line := range lines {
+		if bytes.Contains(line, bytesJson) {
+			lines[i] = changeLine(line)
 		}
 	}
-	return nil
+	return os.WriteFile(path, bytes.Join(lines, eof), perm)
 }
-
-var comma = []byte(",")
 
 func changeLine(line []byte) []byte {
 	lineItems := bytes.Split(line, comma)

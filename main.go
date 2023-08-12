@@ -14,6 +14,7 @@ var (
 	htp = flag.Bool("htp", false, "generate empty http-server")
 	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
 	ser = flag.Bool("ser", false, "some replaces in internal/service")
+	crs = flag.Bool("crs", false, "adding cors to http")
 )
 
 var argFunc func() error
@@ -38,6 +39,8 @@ func main() {
 		argFunc = args.MessagesServer
 	} else if *ser {
 		argFunc = args.Services
+	} else if *crs {
+		argFunc = args.Cors
 	} else {
 		log.Fatalln("unknown option")
 	}
