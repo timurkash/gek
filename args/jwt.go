@@ -8,12 +8,7 @@ import (
 	"strings"
 )
 
-var (
-	r       = []byte("r.")
-	context = []byte(`"context"`)
-)
-
-func Cors() error {
+func JwtServer() error {
 	rest, err := os.Getwd()
 	if err != nil {
 		return err
@@ -22,7 +17,7 @@ func Cors() error {
 	rest = strings.ReplaceAll(rest, "/proto", "")
 	if err := filepath.Walk("gen/go", func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && strings.HasSuffix(path, "_http.pb.go") {
-			if err := changeHttpServer(path, info.Mode().Perm(), rest); err != nil {
+			if err := changeJwtHttpServer(path, info.Mode().Perm(), rest); err != nil {
 				return err
 			}
 		}
@@ -33,12 +28,14 @@ func Cors() error {
 	return nil
 }
 
-func changeHttpServer(path string, perm os.FileMode, rest string) error {
+var hCtx = []byte("h(ctx, &in)")
+
+func changeJwtHttpServer(path string, perm os.FileMode, rest string) error {
 	bytesIn, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	if !bytes.Contains(bytesIn, r) {
+	if !bytes.Contains(bytesIn, context) {
 		return nil
 	}
 	backCommonRest := []byte(fmt.Sprintf("\"%s/back/common/rest\"", rest))
@@ -48,31 +45,13 @@ func changeHttpServer(path string, perm os.FileMode, rest string) error {
 		switch {
 		case bytes.Contains(line, context) && !hasRest:
 			lines[i] = append([]byte("\tcontext \"context\"\n\t"), backCommonRest...)
-		case bytes.Contains(line, r):
-			lines[i] = changeRLine(line)
+		case bytes.Contains(line, hCtx):
+			lines[i] = []byte(`		bearerToken, err := rest.GetBearerToken(ctx)
+		if err != nil {
+			return err
+		}
+		out, err := h(rest.AppendTokenToContext(ctx, bearerToken), &in)`)
 		}
 	}
 	return os.WriteFile(path, bytes.Join(lines, eof), perm)
-}
-
-var methods = []string{
-	"GET",
-	"HEAD",
-	"POST",
-	"PUT",
-	"PATCH",
-	"DELETE",
-	"CONNECT",
-	"OPTIONS",
-	"TRACE",
-}
-
-func changeRLine(line []byte) []byte {
-	line = bytes.ReplaceAll(line, r, []byte("rest.HandleRoute(r, "))
-	for _, method := range methods {
-		line = bytes.ReplaceAll(line,
-			[]byte(fmt.Sprintf("%s(", method)),
-			[]byte(fmt.Sprintf(`"%s", `, method)))
-	}
-	return line
 }

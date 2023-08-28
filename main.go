@@ -13,6 +13,7 @@ var (
 	gen = flag.Bool("gen", false, "generate the service project")
 	htp = flag.Bool("htp", false, "generate empty http-server")
 	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
+	jwt = flag.Bool("jwt", false, "modifying http server to set access_token into context")
 	ser = flag.Bool("ser", false, "some replaces in internal/service")
 	crs = flag.Bool("crs", false, "adding cors to http")
 )
@@ -27,21 +28,24 @@ func main() {
 		args.ShowDescription()
 		return
 	}
-	if *utl {
+	switch {
+	case *utl:
 		argFunc = args.ShowUtils
-	} else if *chk {
+	case *chk:
 		argFunc = args.Check
-	} else if *gen {
+	case *gen:
 		argFunc = args.Generate
-	} else if *htp {
+	case *htp:
 		argFunc = args.HttpServer
-	} else if *mes {
+	case *mes:
 		argFunc = args.MessagesServer
-	} else if *ser {
+	case *jwt:
+		argFunc = args.JwtServer
+	case *ser:
 		argFunc = args.Services
-	} else if *crs {
+	case *crs:
 		argFunc = args.Cors
-	} else {
+	default:
 		log.Fatalln("unknown option")
 	}
 	if err := argFunc(); err != nil {
