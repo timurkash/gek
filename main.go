@@ -14,7 +14,7 @@ var (
 	htp = flag.Bool("htp", false, "generate empty http-server")
 	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
 	jwt = flag.Bool("jwt", false, "modifying http server to set access_token into context")
-	ser = flag.Bool("ser", false, "some replaces in internal/service")
+	//ser = flag.Bool("ser", false, "some replaces in internal/service")
 	crs = flag.Bool("crs", false, "adding cors to http")
 )
 
@@ -41,8 +41,8 @@ func main() {
 		argFunc = args.MessagesServer
 	case *jwt:
 		argFunc = args.JwtServer
-	case *ser:
-		argFunc = args.Services
+	//case *ser:
+	//	argFunc = args.Services
 	case *crs:
 		argFunc = args.Cors
 	default:
