@@ -16,6 +16,7 @@ var (
 	jwt = flag.Bool("jwt", false, "modifying http server to set access_token into context")
 	//ser = flag.Bool("ser", false, "some replaces in internal/service")
 	crs = flag.Bool("crs", false, "adding cors to http")
+	tsi = flag.Bool("tsi", false, "ts ignore unused interface")
 )
 
 var argFunc func() error
@@ -45,6 +46,8 @@ func main() {
 	//	argFunc = args.Services
 	case *crs:
 		argFunc = args.Cors
+	case *tsi:
+		argFunc = args.TsIgnore
 	default:
 		log.Fatalln("unknown option")
 	}
