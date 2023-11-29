@@ -4,20 +4,20 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 var (
-	bytesGoogleApiAnnotations  = []byte(`import * as dependency_1 from "./../../google/api/annotations";`)
-	bytesGoogleApiAnnotations_ = append([]byte(`//`), bytesGoogleApiAnnotations...)
-	bytesInterface             = []byte(`    interface `)
-	bytesTsIgnore              = []byte(`    // @ts-ignore
+	bytesGoogleApiAnnotations = []byte(`/google/api/annotations";`)
+	bytesComment              = []byte(`// `)
+	bytesValidation           = []byte(`/validate/validate";`)
+	bytesInterface            = []byte(`    interface `)
+	bytesTsIgnore             = []byte(`    // @ts-ignore
 `)
 )
 
 func TsIgnore() error {
 	if err := filepath.Walk("gen/ts/api", func(path string, info os.FileInfo, err error) error {
-		if !info.IsDir() && !strings.HasSuffix(path, "/messages.ts") {
+		if !info.IsDir() {
 			if err := changeTs(path, info.Mode()); err != nil {
 				return err
 			}
@@ -37,8 +37,10 @@ func changeTs(path string, perm os.FileMode) error {
 	lines := bytes.Split(bytesIn, eof)
 	for i, line := range lines {
 		switch {
-		case bytes.Equal(line, bytesGoogleApiAnnotations):
-			lines[i] = bytesGoogleApiAnnotations_
+		case bytes.HasSuffix(line, bytesGoogleApiAnnotations):
+			lines[i] = append(bytesComment, line...)
+		case bytes.HasSuffix(line, bytesValidation):
+			lines[i] = append(bytesComment, line...)
 		case bytes.HasPrefix(line, bytesInterface):
 			lines[i] = append(bytesTsIgnore, line...)
 		}
