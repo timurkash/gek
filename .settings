@@ -1,6 +1,7 @@
 name: name
 service: ServiceFromProto
 servicePackage: servicepackage
+repo: cr.yandex/crptu9orgsq8k6bhkif3
 kratosLayout: https://github.com/timurkash/kratos-layout.git
 templateRepo: github.com/company/project/back/kratos-template
 

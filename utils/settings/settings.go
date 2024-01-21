@@ -22,6 +22,7 @@ type (
 	Settings struct {
 		Name           string `yaml:"name" valid:"required,lowercase"`
 		Version        string `yaml:"version"`
+		Registry       string `yaml:"registry"`
 		Service        string `yaml:"service" valid:"required"`
 		ServicePackage string `yaml:"servicePackage"`
 		KratosLayout   string `yaml:"kratosLayout"`
@@ -133,6 +134,9 @@ func (s *Settings) CheckEnv(gen bool) error {
 	}
 	s.ProjectGroup = projectGroup
 	s.Repo = filepath.Join(projectGroup, utils.Back, nameVersion)
+	if s.Registry == "" {
+		s.Registry = s.Repo
+	}
 	s.GitRepo = fmt.Sprintf("git@%s.git", strings.Replace(s.Repo, "/", ":", 1))
 	srcProtoRepo := filepath.Join(s.GoPathSrc, s.ProjectGroup, utils.Proto)
 	if !utils.IsDirExists(srcProtoRepo) {
