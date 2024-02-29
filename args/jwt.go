@@ -50,7 +50,7 @@ func changeJwtHttpServer(path string, perm os.FileMode, rest string) error {
 		if err != nil {
 			return err
 		}
-		out, err := h(rest.AppendTokenToContext(ctx, bearerToken), &in)`)
+		out, err := h(rest.AppendTokenToContext(rest.AppendHeadersValues(ctx, ctx.Header()), bearerToken), &in)`)
 		}
 	}
 	return os.WriteFile(path, bytes.Join(lines, eof), perm)
