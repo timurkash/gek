@@ -11,7 +11,6 @@ var (
 	utl = flag.Bool("utl", false, "required utils")
 	chk = flag.Bool("chk", false, "check if all utils is installed")
 	gen = flag.Bool("gen", false, "generate the service project")
-	htp = flag.Bool("htp", false, "generate empty http-server")
 	mes = flag.Bool("mes", false, "adjust protobuf messages to json one")
 	jwt = flag.Bool("jwt", false, "modifying http server to set access_token into context")
 	//ser = flag.Bool("ser", false, "some replaces in internal/service")
@@ -36,8 +35,6 @@ func main() {
 		argFunc = args.Check
 	case *gen:
 		argFunc = args.Generate
-	case *htp:
-		argFunc = args.HttpServer
 	case *mes:
 		argFunc = args.MessagesServer
 	case *jwt:
