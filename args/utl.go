@@ -20,7 +20,7 @@ var Utils = []Util{
 	{"go", "https://go.dev/doc/install"},
 	{"git", "sudo apt install git"},
 	{"make", "sudo apt -y install make"},
-	{"kratos", "go install  github.com/go-kratos/kratos/cmd/kratos/v2@latest"},
+	{"kratos", "go install github.com/go-kratos/kratos/cmd/kratos/v2@latest"},
 	{"protoc", "sudo apt install -y protobuf-compiler"},
 	{"protoc-gen-go", "kratos upgrade"},
 	{"protoc-gen-go-grpc", "kratos upgrade"},
@@ -46,7 +46,7 @@ func ShowUtils() error {
 		if err := utils.IsUtilExists(util.Name); err != nil {
 			fmt.Printf(" - %s: To install run '%s'\n", util.Name, blue(util.Command))
 		} else {
-			fmt.Printf(" - %s: %s\n", util.Name, green("installed"))
+			fmt.Printf(" - %s: %s\n", green("installed"), util.Name)
 		}
 	}
 	return nil

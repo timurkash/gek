@@ -20,7 +20,9 @@ func downloadAndReplaceFromTemplateRepo(settings *settings.Settings) error {
 		return nil
 	}
 	templateRepo = strings.ReplaceAll(templateRepo, "https://", "")
-	templateRepo = strings.ReplaceAll(templateRepo, ".git", "")
+	if strings.HasSuffix(templateRepo, ".git") {
+		templateRepo = templateRepo[0 : len(templateRepo)-4]
+	}
 	repoDir := filepath.Join(settings.GoPathSrc, templateRepo)
 	if err := cloneOrPull(settings.GoPathSrc, templateRepo); err != nil {
 		return err
