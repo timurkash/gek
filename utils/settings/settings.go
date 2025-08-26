@@ -165,8 +165,8 @@ func (s *Settings) CheckEnv(gen bool) error {
 	if !bytes.Contains(fileBytes, []byte(packageService)) {
 		return fmt.Errorf("%s not contains package %s", srcProtoRepoServiceProto, packageService)
 	}
-	goOption := fmt.Sprintf(`option go_package = "%s/proto/gen/go/api/%s;%s";`,
-		s.ProjectGroup, s.ServicePackage, s.ServicePackage)
+	goOption := fmt.Sprintf(`option go_package = "%s/proto/gen/go/api/%s"`,
+		s.ProjectGroup, s.ServicePackage)
 	if !bytes.Contains(fileBytes, []byte(goOption)) {
 		return fmt.Errorf("%s not contains go_option %s", srcProtoRepoServiceProto, goOption)
 	}
